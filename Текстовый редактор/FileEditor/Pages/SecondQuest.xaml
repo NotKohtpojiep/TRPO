@@ -30,6 +30,6 @@
                 </MenuItem.ItemContainerStyle>
             </MenuItem>
         </Menu>
-        <TextBox Grid.Column="1" Grid.Row="1" AcceptsTab="True" TextWrapping="Wrap" x:Name="TextBoxText" AcceptsReturn="True" Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Grid.Column="1" Grid.Row="1" VerticalScrollBarVisibility="Visible" AcceptsReturn="True" AcceptsTab ="True" TextWrapping="Wrap" Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
     </Grid>
 </UserControl>

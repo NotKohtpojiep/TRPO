@@ -29,7 +29,6 @@
             </MenuItem.ItemContainerStyle>
         </MenuItem>
         </Menu>
-        <TextBox x:Name="TextBoxText" Grid.Column="1" Grid.Row="1" AcceptsTab="True" TextWrapping="Wrap" 
-                 AcceptsReturn="True" Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox x:Name="TextBoxText" Grid.Column="1" Grid.Row="1" VerticalScrollBarVisibility="Visible" AcceptsReturn="True" AcceptsTab ="True" TextWrapping="Wrap" Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
     </Grid>
 </UserControl>
