@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using DevExpress.Mvvm;
 using FileEditor.Models;
@@ -28,7 +25,7 @@ namespace FileEditor.ViewModels
         {
             MenuItems = new ObservableCollection<MenuItemObject>(new List<MenuItemObject>
             {
-                new MenuItemObject {Command = new RelayCommand<string>(_ =>  ReadFromFile()), Content = "Показать таблицу в блокноте"},
+                new MenuItemObject {Command = new RelayCommand<string>(_ =>  OpenNotepad(FormatToTable(Text))), Content = "Показать таблицу в блокноте"},
                 new MenuItemObject {Command = new RelayCommand<string>(_ => SaveHtmlFileTable(Text)), Content = "Отобразить таблицу в браузере"},
                 new MenuItemObject {Command = new RelayCommand<object>(_ => CloseProgram()), Content = "Выход"}
             });
@@ -44,7 +41,7 @@ namespace FileEditor.ViewModels
         [DllImport("User32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int uMsg, int wParam, string lParam);
 
-        private void ReadFromFile()
+        private void OpenNotepad(string content = "")
         {
             //Process.Start("C:\\Windows\\System32\\notepad.exe", Text);
             try
@@ -55,8 +52,8 @@ namespace FileEditor.ViewModels
                     throw new Exception("Process is null");
                 }
                 notepad.WaitForInputIdle();
-                Clipboard.SetText(Text);
-                SendMessage(FindWindowEx(notepad.MainWindowHandle, new IntPtr(0), "Edit", null), 0x000C, 0, Text);
+                Clipboard.SetText(content);
+                SendMessage(FindWindowEx(notepad.MainWindowHandle, new IntPtr(0), "Edit", null), 0x000C, 0, content);
             }
             catch (Exception e)
             {
@@ -66,16 +63,31 @@ namespace FileEditor.ViewModels
 
         private void SaveHtmlFileTable(string content)
         {
-            string filePath = new FileOperator().SaveAsHtmlFile(content);
-            var proc = Process.Start(@"cmd.exe ", @"/c " + filePath);
             try
             {
-                
+                string filePath = new FileOperator().SaveAsHtmlFile(content);
+                var proc = Process.Start(@"cmd.exe ", @"/c " + filePath);
             }
             catch (Exception e)
             {
                 MessageBox.Show("Smth went wrong");
             }
+        }
+
+        private string FormatToTable(string content)
+        {
+            string[] textStrokes = content.Split("\r\n");
+            var sb = new StringBuilder();
+            foreach (var textStroke in textStrokes)
+            {
+                string[] tabbedWords = textStroke.Split('\t', StringSplitOptions.RemoveEmptyEntries);
+                foreach (var tabbedWord in tabbedWords)
+                {
+                    sb.Append($"{tabbedWord,-30}");
+                }
+                sb.Append("\r\n");
+            }
+            return sb.ToString();
         }
     }
 }

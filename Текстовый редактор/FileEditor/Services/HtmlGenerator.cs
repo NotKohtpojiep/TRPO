@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace FileEditor.Services
 {
@@ -10,7 +11,7 @@ namespace FileEditor.Services
         public const string HeaderEnd = "</header>";
         public const string BodyStart = "<body>";
         public const string BodyEnd = "</body>";
-        public const string TableStart = "<table>";
+        public const string TableStart = "<table style=\"border-spacing: 60px 3px;\">";
         public const string TableEnd = "</table>";
         public const string TrStart = "<tr>";
         public const string TrEnd = "</tr>";
@@ -25,12 +26,16 @@ namespace FileEditor.Services
         {
             if (content != null)
             {
-
-                content = string.Join("",content.Split("\t").Select(x => TdStart + x + TdEnd).ToArray());
-                content = string.Join("", content.Split("\n").Select(x => TdEnd + TrStart + TdStart + x + TrEnd).ToArray());
-                content = TableStart + content.Remove(0,13) + TableEnd;
+                content.Replace("\r", "");
+                content = string.Join("",
+                    content.Split("\t", StringSplitOptions.RemoveEmptyEntries)
+                        .Select(x => $"{TdStart} {x} {TdEnd}").ToArray());
+                content = string.Join("", content.Split("\n")
+                        .Select(x => $"{TdEnd}\n{TrStart}\n{TdStart} {x} {TrEnd}").ToArray());
+                content = $"{TableStart}\n{content.Remove(0, 15)}\n{TableEnd}";
             }
-            string result = string.Join('\n', new string[] { HtmlStart, HeaderStart, HeaderEnd, BodyStart, content, BodyEnd, HtmlEnd });
+            string result = string.Join('\n', new string[]
+                { HtmlStart, HeaderStart, HeaderEnd, BodyStart, content, BodyEnd, HtmlEnd });
             return result;
         }
     }
